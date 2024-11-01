@@ -1,9 +1,9 @@
 // NOTE:FUTURE PROGRESS: take the bats off the board when their health drops
 // below zero and end the round system once all bats health drops to zero.
-
+#include "loot_gen.cpp"
 #include <algorithm>
 #include <chrono>
-#include <cstdarg>
+#include <cstdlib>
 #include <iostream>
 #include <thread>
 #include <vector>
@@ -48,6 +48,7 @@ int attack(Entity *target, Entity attacker) {
 };
 
 int printELN(vector<Entity> &list) {
+  system("clear");
   cout << "Enemies: " << endl;
   cout << "|-----------------------------------|\n";
   int enemy_count = 1;
@@ -62,63 +63,72 @@ int printELN(vector<Entity> &list) {
 }
 
 int Player_choice(Entity P1, vector<Entity> &list) {
-
   this_thread::sleep_for(chrono::milliseconds(1500));
-  char input = '0';
-  while (input != 'R' && input != 'A' && input != 'I' && input != 'S' &&
-         input != 'E') {
-    cout << "|-----------------------------------|\n";
-    cout << "YOUR TURN! WHAT WOULD YOU LIKE TO DO?\n";
-    cout << "                                     \n";
-    cout << "R:                              Rest \n";
-    cout << "A:                            Attack \n";
-    cout << "I:                         Inventory \n";
-    cout << "S:                        Spell List \n";
-    cout << "E:                   End Turn (pass) \n";
-    cout << "                                     \n";
-    cout << "                                     \n";
-    cout << "Mana( " << P1.current_mana << " / " << P1.MAX_MANA << " )\n";
-    cout << "Health( " << P1.current_health << " / " << P1.MAX_HEALTH << " )\n";
-    cout << "|-----------------------------------|\n";
-    cin >> input;
-  }
-  cout << endl;
-  if (input == 'R' && P1.current_health < P1.MAX_HEALTH) {
-    cout << "You chose to Rest!" << endl;
-    this_thread::sleep_for(chrono::milliseconds(250));
-    cout << ". ";
-    this_thread::sleep_for(chrono::milliseconds(250));
-    cout << ". ";
-    this_thread::sleep_for(chrono::milliseconds(250));
-    cout << ".";
-    double hp_recovered = (rand() % 30);
-    int actual_recovered = (P1.MAX_HEALTH * (1 + (hp_recovered / 100)));
-    P1.current_health += (P1.MAX_HEALTH * (1 + (hp_recovered / 100)));
-    if (P1.current_health > P1.MAX_HEALTH) {
-      cout << "You Recovered up to Maximum Health!" << endl;
-      P1.current_health = P1.MAX_HEALTH;
-    } else {
-      cout << "You Recovered " << actual_recovered << endl;
+  char input;
+  while (true) {
+    input = 'X';
+    while (input != 'R' && input != 'A' && input != 'I' && input != 'S' &&
+           input != 'E') {
+      system("clear");
+      cout << "|-----------------------------------|\n";
+      cout << "YOUR TURN! WHAT WOULD YOU LIKE TO DO?\n";
+      cout << "                                     \n";
+      cout << "R:                              Rest \n";
+      cout << "A:                            Attack \n";
+      cout << "I:                         Inventory \n";
+      cout << "S:                        Spell List \n";
+      cout << "E:                   End Turn (pass) \n";
+      cout << "                                     \n";
+      cout << "                                     \n";
+      cout << "Mana( " << P1.current_mana << " / " << P1.MAX_MANA << " )\n";
+      cout << "Health( " << P1.current_health << " / " << P1.MAX_HEALTH
+           << " )\n";
+      cout << "|-----------------------------------|\n";
+      cin >> input;
     }
-  } else if (input == 'R' && P1.current_health >= P1.MAX_HEALTH) {
-    cout << "You are already at Maximum Hitpoints." << endl;
-  }
-
-  if (input == 'A') {
-    int enemy_selection = 0;
-    cout << "Which enemy would you like to attack?" << endl;
-    int num_enemy = printELN(list);
-    cout << "num_enemy = " << num_enemy << endl;
-    cin >> enemy_selection;
-    /*
-    while (list[enemy_selection].ID != 1) {
-      enemy_selection++;
+    cout << endl;
+    if (input == 'R' && P1.current_health < P1.MAX_HEALTH) {
+      cout << "You chose to Rest!" << endl;
+      this_thread::sleep_for(chrono::milliseconds(250));
+      cout << ". ";
+      this_thread::sleep_for(chrono::milliseconds(250));
+      cout << ". ";
+      this_thread::sleep_for(chrono::milliseconds(250));
+      cout << ".";
+      double hp_recovered = (rand() % 30);
+      int actual_recovered = (P1.MAX_HEALTH * (1 + (hp_recovered / 100)));
+      P1.current_health += (P1.MAX_HEALTH * (1 + (hp_recovered / 100)));
+      if (P1.current_health > P1.MAX_HEALTH) {
+        cout << "You Recovered up to Maximum Health!" << endl;
+        P1.current_health = P1.MAX_HEALTH;
+      } else {
+        cout << "You Recovered " << actual_recovered << endl;
+      }
+    } else if (input == 'R' && P1.current_health >= P1.MAX_HEALTH) {
+      cout << "You are already at Maximum Hitpoints." << endl;
     }
-    */
-    cout << "You hit the " << ID_to_name(list[enemy_selection - 1]) << " for "
-         << attack(&list[enemy_selection - 1], P1) << " damage!" << endl;
-  }
 
+    if (input == 'A') {
+      int enemy_selection = 0;
+      cout << "Which enemy would you like to attack?" << endl;
+      int num_enemy = printELN(list);
+      cout << "num_enemy = " << num_enemy << endl;
+      cin >> enemy_selection;
+      /*
+      while (list[enemy_selection].ID != 1) {
+        enemy_selection++;
+      }
+      */
+      cout << "You hit the " << ID_to_name(list[enemy_selection - 1]) << " for "
+           << attack(&list[enemy_selection - 1], P1) << " damage!" << endl;
+      return input;
+    } else if (input == 'I') {
+      system("clear");
+      print_inventory();
+      cout << "Input test:  ";
+      cin >> input;
+    }
+  }
   return input;
 };
 
@@ -128,6 +138,7 @@ void dead_check(vector<Entity> &list) {
     if (list[i].current_health <= 0) {
       // Remove element at index i
       list.erase(list.begin() + i);
+      produce_loot(list[i].ID);
     }
   }
 }

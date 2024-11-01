@@ -7,10 +7,14 @@ struct item_generic {
   int price;
   string name;
   string description;
+  int quantity;
   item_generic(string n, string desc, int p) {
     name = n, description = desc, price = p;
   }
-  item_generic();
+  item_generic(string n, string desc, int p, int q) {
+    name = n, description = desc, price = p, quantity = q;
+  }
+  item_generic() { name = "", description = "NA", price = 0, quantity = 0; }
 };
 
 item_generic leather("Leather", "Cow's Leather.. Gross", 3);
@@ -19,10 +23,10 @@ item_generic feathers("Feathers", "Did dinosaurs have feathers?", 2);
 item_generic iron("Iron Ingot", "It's quite heavy.", 15);
 item_generic rat_poison("Rat Poison", "Would not recommend drinking.", 10);
 
-struct healing : item_generic {
+struct healing : public item_generic {
   int health;
-
-  healing(string n, string desc, int h, int p) {
+  healing() : item_generic(), health(0){};
+  healing(string n, string desc, int h, int p) : item_generic() {
 
     name = n, desc = description, h = health, p = price;
   };
