@@ -1,6 +1,7 @@
-// NOTE:FUTURE PROGRESS: take the bats off the board when their health drops
-// below zero and end the round system once all bats health drops to zero.
-#include "loot_gen.cpp"
+// NOTE: Balance enemy damage, and resting health restore, currently ALWAYS
+// restores you to max hp. Integrate Map and combat simulation.
+#include "loot_gen.h"
+#include "movement.h"
 #include <algorithm>
 #include <chrono>
 #include <cstdlib>
@@ -8,6 +9,11 @@
 #include <thread>
 #include <vector>
 using namespace std;
+
+LG loot;
+HEALING_ITEM h;
+ITEM_LIST it;
+Movement mg;
 
 struct Entity {
   string name;
@@ -21,6 +27,7 @@ struct Entity {
   int MAX_HEALTH;
 };
 
+struct termios oldSettings;
 string ID_to_name(Entity NA) {
 
   switch (NA.ID) {
@@ -62,13 +69,15 @@ int printELN(vector<Entity> &list) {
   return enemy_count - 1;
 }
 
-int Player_choice(Entity P1, vector<Entity> &list) {
+int Player_choice(Entity &P1, vector<Entity> &list) {
   this_thread::sleep_for(chrono::milliseconds(1500));
+  mg.setRawMode(oldSettings);
   char input;
   while (true) {
     input = 'X';
     while (input != 'R' && input != 'A' && input != 'I' && input != 'S' &&
-           input != 'E') {
+           input != 'E' && input != 'r' && input != 'a' && input != 'i' &&
+           input != 's' && input != 'e' && input != 27) {
       system("clear");
       cout << "|-----------------------------------|\n";
       cout << "YOUR TURN! WHAT WOULD YOU LIKE TO DO?\n";
@@ -84,10 +93,13 @@ int Player_choice(Entity P1, vector<Entity> &list) {
       cout << "Health( " << P1.current_health << " / " << P1.MAX_HEALTH
            << " )\n";
       cout << "|-----------------------------------|\n";
-      cin >> input;
+      input = mg.getKeyPress();
+    }
+    if (input == 27) {
+      exit(0);
     }
     cout << endl;
-    if (input == 'R' && P1.current_health < P1.MAX_HEALTH) {
+    if ((input == 'R' || input == 'r') && P1.current_health < P1.MAX_HEALTH) {
       cout << "You chose to Rest!" << endl;
       this_thread::sleep_for(chrono::milliseconds(250));
       cout << ". ";
@@ -101,35 +113,42 @@ int Player_choice(Entity P1, vector<Entity> &list) {
       if (P1.current_health > P1.MAX_HEALTH) {
         cout << "You Recovered up to Maximum Health!" << endl;
         P1.current_health = P1.MAX_HEALTH;
+        return 0;
       } else {
         cout << "You Recovered " << actual_recovered << endl;
+        return 0;
       }
-    } else if (input == 'R' && P1.current_health >= P1.MAX_HEALTH) {
+    } else if ((input == 'R' || input == 'r') &&
+               P1.current_health >= P1.MAX_HEALTH) {
       cout << "You are already at Maximum Hitpoints." << endl;
+      this_thread::sleep_for(chrono::milliseconds(2500));
     }
 
-    if (input == 'A') {
-      int enemy_selection = 0;
-      cout << "Which enemy would you like to attack?" << endl;
+    if (input == 'A' || input == 'a') {
+      char enemy_selection = 0;
       int num_enemy = printELN(list);
-      cout << "num_enemy = " << num_enemy << endl;
-      cin >> enemy_selection;
-      /*
-      while (list[enemy_selection].ID != 1) {
-        enemy_selection++;
+      cout << "Which enemy would you like to attack?" << endl;
+      cout << "Hit: (B) to go back" << endl;
+      enemy_selection = mg.getKeyPress();
+      if (enemy_selection == 27) {
+        exit(0);
+      } else if (enemy_selection == 'B' || enemy_selection == 'b') {
+        continue;
       }
-      */
+      enemy_selection = enemy_selection - '0';
       cout << "You hit the " << ID_to_name(list[enemy_selection - 1]) << " for "
            << attack(&list[enemy_selection - 1], P1) << " damage!" << endl;
       return input;
-    } else if (input == 'I') {
+    } else if (input == 'I' || input == 'i') {
       system("clear");
-      print_inventory();
-      cout << "Input test:  ";
-      cin >> input;
+      loot.print_inventory();
+      input = mg.getKeyPress();
+      system("clear");
+    } else if (input == 'E' || input == 'e') {
+      return 0;
     }
   }
-  return input;
+  return 0;
 };
 
 void dead_check(vector<Entity> &list) {
@@ -138,7 +157,7 @@ void dead_check(vector<Entity> &list) {
     if (list[i].current_health <= 0) {
       // Remove element at index i
       list.erase(list.begin() + i);
-      produce_loot(list[i].ID);
+      loot.produce_loot(list[i].ID);
     }
   }
 }
@@ -161,6 +180,7 @@ int turn_table(Entity NA, vector<Entity> &list) {
   case (1):
     // PLAYER:
     return Player_choice(NA, list);
+    mg.resetMode(oldSettings);
     break;
   case (2):
     // BAT:
@@ -226,8 +246,9 @@ int main() {
     for (int i = 0; i < turn_order.size(); i++) {
       if (turn_order[i].ID != 1) {
         P1.current_health -= turn_table(turn_order[i], turn_order);
+        cout << "PLAYER HEALTH: " << P1.current_health << endl;
       } else {
-        turn_table(turn_order[i], turn_order);
+        Player_choice(P1, turn_order);
       }
     }
     dead_check(turn_order);

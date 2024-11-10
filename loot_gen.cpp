@@ -1,14 +1,12 @@
-#include "item_list.cpp"
+#include "loot_gen.h"
 #include <iostream>
 #include <vector>
 using namespace std;
 
-item_generic gold = {"Gold", "Some Schmekles", 1};
-vector<item_generic> player_inventory = {gold, bones};
-vector<item_generic> reference_list = {gold, leather, bones, feathers, iron};
+vector<ITEM_LIST::item_generic> player_inventory;
 
-void add_item(vector<item_generic> &list, string name, int quantity) {
-
+void LG::add_item(vector<ITEM_LIST::item_generic> &list, string name,
+                  int quantity) {
   for (int i = 0; i < list.size(); i++) {
     if (list[i].name == name) {
       list[i].quantity += quantity;
@@ -22,14 +20,14 @@ void add_item(vector<item_generic> &list, string name, int quantity) {
       return;
     }
   }
-  item_generic PLACE_HOLDER = {name, "", 0, quantity};
+  ITEM_LIST::item_generic PLACE_HOLDER = {name, "", 0, quantity};
   cout << "We should not be here. But I will add the PLACEHOLDER regardless.."
        << endl;
   list.push_back(PLACE_HOLDER);
   return;
 }
-string s;
-void produce_loot(int enemy_num) {
+
+void LG ::produce_loot(int enemy_num) {
 
   switch (enemy_num) {
 
@@ -134,7 +132,7 @@ void produce_loot(int enemy_num) {
   };
 }
 
-void print_inventory() {
+void LG::print_inventory() const {
   cout << "           INVENTORY:                 " << endl;
   cout << "======================================" << endl;
   for (int i = 0; i < player_inventory.size(); i++) {
