@@ -1,8 +1,5 @@
 // NOTE: Balance enemy damage, and resting health restore, currently ALWAYS
-// restores you to max hp. Integrate Map with combat simulation.
-
-// NOTE: Question for Jackson, how do I push child classes onto vector of
-// abstract parent classes? [Spells* spells.push_back();]
+// restores you to max hp. Integrate Map and combat simulation.
 #include "AllnAll.h"
 #include "fireball.h"
 #include "loot_gen.h"
@@ -65,13 +62,13 @@ void dead_check(vector<entity> &list) {
 }
 
 SPELL *FB = new Fireball(20, 20, "Fireball");
-SPELL *AA = new AllnAll(100, "All for All");
+SPELL *AA = new AllnAll(10, "All for All");
 SPELL *TA = new TARROWS(10, 30, "Thousand Arrows");
+
 vector<SPELL *> spells = {FB, AA, TA};
 void spell_attack(vector<SPELL *> spell_list, entity &player,
                   vector<entity> &enemy_list) {
   system("clear");
-  mg.resetMode(oldSettings);
   int input;
   cout << "==============================="
        << "\n\n";
@@ -81,7 +78,7 @@ void spell_attack(vector<SPELL *> spell_list, entity &player,
   }
   cout << "==============================="
        << "\n\n";
-  cout << "Which spell would you like?: ";
+  cout << "Which spell would you like?";
   while (input < 1 || input > spell_list.size()) {
     cin >> input;
   }
@@ -97,6 +94,8 @@ void spell_attack(vector<SPELL *> spell_list, entity &player,
   cin >> enemy_selection;
   if (enemy_selection == 27) {
     exit(0);
+  } else if (enemy_selection == 'B' || enemy_selection == 'b') {
+    return;
   } else if (enemy_selection - '0' > 0 &&
              enemy_selection - '0' < enemy_list.size()) {
     spell_list[input]->attack(enemy_list, enemy_selection - '0' - 1);

@@ -14,11 +14,12 @@ public:
     healing();
   };
 
-  healing generate_random_item(vector<healing> list);
+  healing generate_random_healing(vector<healing> list);
 
   ITEM_LIST::item_generic
   generate_random_item(vector<ITEM_LIST::item_generic> list);
 };
+
 extern HEALING_ITEM::healing apple;
 extern HEALING_ITEM::healing bad_apple;
 extern HEALING_ITEM::healing steak;

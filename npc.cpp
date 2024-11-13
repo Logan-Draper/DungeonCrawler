@@ -1,57 +1,56 @@
-#include "item_list.cpp"
-
+#include "npc.h"
 #include <iostream>
 #include <string>
 #include <vector>
 using namespace std;
 
-class Merchant {
-public:
-  string name;
-  string welcome_statement;
-  int inventory_generic_size = rand() % 10 + 1;
-  int inventory_healing_size = rand() % 3 + 1;
-  vector<item_generic> inventory;
-  vector<healing> healing_inventory;
-  // NOTE: General Constructor
-  Merchant(string n, string ws) { name = n, welcome_statement = ws; }
-
-  Merchant(){};
-  void populate_list_generic(vector<item_generic> list) {
-    for (int i = 0; i < inventory_generic_size; i++) {
-      inventory.push_back(generate_random_item(list));
-    }
-  }
-  void populate_list_healing(vector<healing> list) {
-    for (int i = 0; i < inventory_healing_size; i++) {
-      inventory.push_back(generate_random_item(list));
-    }
-  }
-  void print_list() {
-    cout << name << "'s shop! " << endl;
-    cout << welcome_statement << endl;
-    cout << "==================================" << endl;
-    cout << "General Items: " << endl;
-    cout << endl;
-    for (int i = 0; i < inventory_generic_size; i++) {
-      cout << inventory[i].name << " ";
-    }
-    cout << endl;
-    cout << "Healing Items: " << endl;
-    for (int i = 0; i < inventory_healing_size; i++) {
-      cout << healing_inventory[i].name
-           << " healing: " << abs(healing_inventory[i].health);
-    }
-    cout << endl;
-    cout << "==================================" << endl;
-    cout << endl;
-  }
+// NOTE: General Constructor
+MERCH ::MERCH(string n, string ws) { name = n, welcome_statement = ws; };
+/*
+MERCH ::MERCH(string n, string ws, int i_size, int h_size) {
+  name = n, welcome_statement = ws, inventory.resize(i_size),
+  healing_inventory.resize(h_size);
 };
+*/
+void MERCH ::populate_list_generic(vector<ITEM_LIST::item_generic> list,
+                                   int num_items,
+                                   vector<ITEM_LIST::item_generic> &inventory) {
+
+  for (int i = 0; i < num_items; i++) {
+    inventory.push_back(HI.generate_random_item(list));
+  }
+}
+void MERCH::populate_list_healing(
+    vector<HEALING_ITEM::healing> list, int num_items,
+    vector<HEALING_ITEM::healing> &healing_inventory) {
+  for (int i = 0; i < num_items; i++) {
+    healing_inventory.push_back(HI.generate_random_healing(list));
+  }
+}
+void MERCH::print_list() {
+  cout << name << "'s shop! " << endl;
+  cout << welcome_statement << endl;
+  cout << "==================================" << endl;
+  cout << "General Items: " << endl;
+  cout << endl;
+  for (int i = 0; i < inventory.size(); i++) {
+    cout << inventory[i].name << " " << endl;
+  }
+  cout << endl;
+  cout << "Healing Items: " << endl;
+  for (int i = 0; i < healing_inventory.size(); i++) {
+    cout << healing_inventory[i].name
+         << " healing: " << abs(healing_inventory[i].health) << endl;
+  }
+  cout << endl;
+  cout << "==================================" << endl;
+  cout << endl;
+}
 
 int main() {
 
-  Merchant logan("Logan the great", "Welcome to my shop!");
-  logan.populate_list_generic(generics_list_1);
-  logan.populate_list_healing(healing_list_1);
+  MERCH logan("Logan the great", "Welcome to my shop!");
+  logan.populate_list_generic(generic_list_1, 20, logan.inventory);
+  logan.populate_list_healing(healing_list_1, 1, logan.healing_inventory);
   logan.print_list();
 }

@@ -1,3 +1,3 @@
-using namespace std;
+#include "spells.h"
 
-int main() {}
+SPELL::SPELL(int m, string n) : mana_cost(m), name(n){};

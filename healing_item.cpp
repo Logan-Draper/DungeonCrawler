@@ -1,11 +1,12 @@
 #include "healing_item.h"
 using namespace std;
 
-HEALING_ITEM::healing generate_random_item(vector<HEALING_ITEM::healing> list) {
+HEALING_ITEM::healing
+HEALING_ITEM::generate_random_healing(vector<HEALING_ITEM::healing> list) {
   return list[rand() % list.size()];
 }
 ITEM_LIST::item_generic
-generate_random_item(vector<ITEM_LIST::item_generic> list) {
+HEALING_ITEM::generate_random_item(vector<ITEM_LIST::item_generic> list) {
   return list[rand() % list.size()];
 }
 HEALING_ITEM::healing::healing(int h, string n, string d, int p, int q)
