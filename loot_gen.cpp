@@ -139,7 +139,6 @@ void LG::print_inventory() const {
     cout << player_inventory[i].name << ": " << player_inventory[i].quantity
          << endl;
   }
-
   cout << endl;
   cout << "======================================" << endl;
 }

@@ -1,51 +1,20 @@
 // NOTE: Balance enemy damage, and resting health restore, currently ALWAYS
 // restores you to max hp. Integrate Map with combat simulation.
-
-// NOTE: Question for Jackson, how do I push child classes onto vector of
-// abstract parent classes? [Spells* spells.push_back();]
-#include "AllnAll.h"
-#include "fireball.h"
-#include "loot_gen.h"
-#include "movement.h"
-#include "thousand_arrow.h"
-#include <algorithm>
-#include <chrono>
-#include <cstdlib>
-#include <iostream>
-#include <thread>
-#include <vector>
+#include "combat_sim.h"
 using namespace std;
 
-LG loot;
-HEALING_ITEM h;
-ITEM_LIST it;
-Movement mg;
+COM_SIM::COM_SIM(){};
 
-struct termios oldSettings;
-string ID_to_name(entity NA) {
+string COM_SIM::ID_to_name(entity NA) { return NA.name; }
 
-  switch (NA.ID) {
-
-  case (1):
-    // Player Name:
-    return "Player";
-
-  case (2):
-    return "BAT";
-
-  default:
-    return "";
-  };
-}
-
-int printELN(vector<entity> &list) {
+int COM_SIM::printELN(vector<entity> &list) {
   system("clear");
   cout << "Enemies: " << endl;
   cout << "|-----------------------------------|\n";
   int enemy_count = 1;
   for (int i = 0; i < list.size(); i++) {
-    if (list[i].ID != 1) {
-      cout << enemy_count << ": " << ID_to_name(list[i]) << endl;
+    if (list[i].ID != 000) {
+      cout << enemy_count << ": " << list[i].name << endl;
       enemy_count++;
     }
   }
@@ -53,7 +22,7 @@ int printELN(vector<entity> &list) {
   return enemy_count - 1;
 }
 
-void dead_check(vector<entity> &list) {
+void COM_SIM::dead_check(vector<entity> &list) {
 
   for (int i = 0; i < list.size(); i++) {
     if (list[i].current_health <= 0) {
@@ -63,13 +32,8 @@ void dead_check(vector<entity> &list) {
     }
   }
 }
-
-SPELL *FB = new Fireball(20, 20, "Fireball");
-SPELL *AA = new AllnAll(100, "All for All");
-SPELL *TA = new TARROWS(10, 30, "Thousand Arrows");
-vector<SPELL *> spells = {FB, AA, TA};
-void spell_attack(vector<SPELL *> spell_list, entity &player,
-                  vector<entity> &enemy_list) {
+void COM_SIM::spell_attack(vector<SPELL *> spell_list, entity &player,
+                           vector<entity> &enemy_list) {
   system("clear");
   mg.resetMode(oldSettings);
   int input;
@@ -106,7 +70,7 @@ void spell_attack(vector<SPELL *> spell_list, entity &player,
   dead_check(enemy_list);
 }
 
-int attack(entity *target, entity attacker) {
+int COM_SIM::attack(entity *target, entity attacker) {
   int damage = 0;
   if (attacker.attack >= target->armor) {
     damage = attacker.attack - target->armor;
@@ -117,7 +81,7 @@ int attack(entity *target, entity attacker) {
   return damage;
 };
 
-int Player_choice(entity &P1, vector<entity> &list) {
+int COM_SIM::Player_choice(entity &P1, vector<entity> &list) {
   this_thread::sleep_for(chrono::milliseconds(1500));
   mg.setRawMode(oldSettings);
   char input;
@@ -186,8 +150,8 @@ int Player_choice(entity &P1, vector<entity> &list) {
         continue;
       }
       enemy_selection = enemy_selection - '0';
-      cout << "You hit the " << ID_to_name(list[enemy_selection - 1]) << " for "
-           << attack(&list[enemy_selection - 1], P1) << " damage!" << endl;
+      cout << "You hit the " << list[enemy_selection].name << " for "
+           << attack(&list[enemy_selection], P1) << " damage!" << endl;
       return input;
     } else if (input == 'I' || input == 'i') {
       system("clear");
@@ -201,40 +165,26 @@ int Player_choice(entity &P1, vector<entity> &list) {
   return 0;
 };
 
-int sum_health(vector<entity> &List) {
+int COM_SIM::sum_health(vector<entity> &List) {
   int sum = 0;
   for (int i = 0; i < List.size(); i++) {
-    if (List[i].ID != 1) {
+    if (List[i].ID != 000) {
       sum += List[i].current_health;
     }
   }
-  cout << "SUM HEALTH: " << sum << endl;
   return sum;
 };
 
-int turn_table(entity NA, vector<entity> &list) {
-  int random = rand() % 10;
-  switch (NA.ID) {
-
-  case (1):
-    // PLAYER:
-    return Player_choice(NA, list);
+int COM_SIM::turn_table(entity NA, vector<entity> &list) {
+  if (NA.ID == 000) {
+    int temp = Player_choice(NA, list);
     mg.resetMode(oldSettings);
-    break;
-  case (2):
-    // BAT:
-    if (random % 2 == 0) {
-      this_thread::sleep_for(chrono::milliseconds(500));
-      cout << "The bat swoops down and bites you!" << endl;
-    } else {
-      this_thread::sleep_for(chrono::milliseconds(500));
-      cout << "OUCH it bit you!" << endl;
-    }
+    return temp;
+  } else {
+    cout << "The " << NA.name << " attacked you !" << endl;
+    this_thread::sleep_for(chrono::milliseconds(500));
     return NA.attack;
-  default:
-    cout << "Unrecognized ID" << endl;
-    return 0;
-  };
+  }
 };
 
 /*
@@ -251,6 +201,7 @@ void order(int counter, vector<Entity> *spd_order, Entity E1, ...) {
 }
 */
 
+/*
 int main() {
 
   entity bat{"BAT", 2, 0, 5, 2, 0, 0, 20, 20};
@@ -293,3 +244,4 @@ int main() {
     }
   }
 }
+*/

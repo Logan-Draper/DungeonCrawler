@@ -1,3 +1,4 @@
+#pragma once
 #include "healing_item.h"
 using namespace std;
 

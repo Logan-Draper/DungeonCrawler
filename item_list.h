@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#pragma once
 using namespace std;
 class ITEM_LIST {
 public:

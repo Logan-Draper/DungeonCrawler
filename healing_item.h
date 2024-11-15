@@ -1,3 +1,4 @@
+#pragma once
 #include "item_list.h"
 #include <string>
 #include <vector>
