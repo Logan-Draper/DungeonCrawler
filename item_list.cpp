@@ -4,6 +4,8 @@
 #include <vector>
 using namespace std;
 
+ITEM_LIST::item_generic::item_generic(){};
+
 ITEM_LIST::item_generic::item_generic(string n, string d, int p, int q)
     : name(n), description(d), price(p), quantity(q){};
 

@@ -94,13 +94,12 @@ vector<vector<char>> room_gen::room_generation(int upper_bound, int lower_bound,
   // int room_start_y = 0;
 
   // Generates starting point for the rooms.
-  map[room_start_x][room_start_y] = 'C';
 
   int current_room_x = room_start_x;
   int current_room_y = room_start_y;
   int internal_error_counter = 0;
   for (int k = 0; k < room_nums - 1; k++) {
-    if (internal_error_counter == 50) {
+    if (internal_error_counter == 25) {
       break;
     }
     cout << "K :" << k << endl;
@@ -164,6 +163,7 @@ vector<vector<char>> room_gen::room_generation(int upper_bound, int lower_bound,
     }
     internal_error_counter++;
   }
+  map[room_start_x][room_start_y] = 'C';
   room_print(map);
   return map;
 }

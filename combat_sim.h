@@ -2,8 +2,11 @@
 #include "combat_weight.h"
 #include "enemy_stat_blocks.h"
 #include "fireball.h"
+#include "level_up.h"
 #include "loot_gen.h"
 #include "movement.h"
+#include "npc.h"
+#include "player.h"
 #include "thousand_arrow.h"
 #include <algorithm>
 #include <chrono>

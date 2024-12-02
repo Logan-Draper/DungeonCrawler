@@ -27,16 +27,15 @@ void COM_SIM::dead_check(vector<entity> &list) {
   for (int i = 0; i < list.size(); i++) {
     if (list[i].current_health <= 0) {
       // Remove element at index i
-      list.erase(list.begin() + i);
       loot.produce_loot(list[i].ID);
+      list.erase(list.begin() + i);
     }
   }
 }
 void COM_SIM::spell_attack(vector<SPELL *> spell_list, entity &player,
                            vector<entity> &enemy_list) {
   system("clear");
-  mg.resetMode(oldSettings);
-  int input;
+  string c_input = "99999";
   cout << "==============================="
        << "\n\n";
   for (int i = 0; i < spell_list.size(); i++) {
@@ -46,14 +45,21 @@ void COM_SIM::spell_attack(vector<SPELL *> spell_list, entity &player,
   cout << "==============================="
        << "\n\n";
   cout << "Which spell would you like?: ";
-  while (input < 1 || input > spell_list.size()) {
-    cin >> input;
+  cout << "FILE UPDATED" << endl;
+  while (stoi(c_input) < 1 || stoi(c_input) > spell_list.size()) {
+    c_input = mg.getKeyPress();
+    if (c_input == "Q") {
+      return;
+    }
   }
+  int input = stoi(c_input);
+  cout << "input: " << input << endl;
   input -= 1;
   cout << "You chose: " << spell_list[input]->name << endl;
   if (spell_list[input]->mana_cost > player.current_mana) {
-    cout << "You don't have the mana to cast that! ";
+    cout << "You don't have the mana to cast that! " << endl;
     spell_attack(spell_list, player, enemy_list);
+    return;
   }
   char enemy_selection;
   int num_enemy = printELN(enemy_list);
@@ -113,12 +119,6 @@ int COM_SIM::Player_choice(entity &P1, vector<entity> &list) {
     cout << endl;
     if ((input == 'R' || input == 'r') && P1.current_health < P1.MAX_HEALTH) {
       cout << "You chose to Rest!" << endl;
-      this_thread::sleep_for(chrono::milliseconds(250));
-      cout << ". ";
-      this_thread::sleep_for(chrono::milliseconds(250));
-      cout << ". ";
-      this_thread::sleep_for(chrono::milliseconds(250));
-      cout << ".";
       double hp_recovered = (rand() % 30);
       int actual_recovered = (P1.MAX_HEALTH * (1 + (hp_recovered / 100)));
       P1.current_health += (P1.MAX_HEALTH * (1 + (hp_recovered / 100)));

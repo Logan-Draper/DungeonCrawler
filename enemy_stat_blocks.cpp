@@ -8,12 +8,10 @@ entity goblin = {"Goblin", 3, 1, 4, 200, 0, 0, 15, 15};
 entity goblin_nerd = {"Goblin Nerd", 2, 0, 0, 201, 0, 0, 10, 10};
 entity goblin_brute = {"Goblin Bruiser", 8, 1, 2, 202, 0, 0, 30, 30};
 entity wraith = {"Wraith", 1, 9999, 0, 005, 0, 0, 999, 999};
-entity necromancer = {"Nercomancer", 15, 7, 5, 30};
+entity necromancer = {"Nercomancer", 7, 4, 10, 103, 0, 0, 15, 15};
 entity necro_skele;
 entity lich_boss;
 entity cultist_1;
 
 vector<entity> enemy_list_1 = {skeleton, goblin, goblin_nerd, goblin_brute,
                                skeleton_brute};
-
-// int main() { cout << ""; }

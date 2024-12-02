@@ -31,7 +31,7 @@ void LG ::produce_loot(int enemy_num) {
 
   switch (enemy_num) {
 
-  case 001: {
+  case 200: {
     cout << "The goblin dropped: " << endl;
 
     int temp = (rand() % 100 + 1);
@@ -60,7 +60,9 @@ void LG ::produce_loot(int enemy_num) {
     }
   }
 
-  case 002: {
+  case 100:
+  case 101:
+  case 102: {
     cout << "The skeleton dropped: " << endl;
 
     int temp = (rand() % 100 + 1);

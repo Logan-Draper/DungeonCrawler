@@ -9,12 +9,14 @@ ITEM_LIST::item_generic
 HEALING_ITEM::generate_random_item(vector<ITEM_LIST::item_generic> list) {
   return list[rand() % list.size()];
 }
+HEALING_ITEM::healing::healing(){};
 HEALING_ITEM::healing::healing(int h, string n, string d, int p, int q)
     : item_generic(n, d, p, q), health(h){};
-HEALING_ITEM::healing::healing(string n, string d, int p, int q)
-    : item_generic(n, d, p, q), health(0){};
+HEALING_ITEM::healing::healing(string n, string d, int h, int q)
+    : item_generic(n, d, h, q), health(h){};
+
 HEALING_ITEM::healing apple("Apple", "Red apple", 10, 4);
-HEALING_ITEM::healing bad_apple("Apple", "Purple apple", -15, 4);
+HEALING_ITEM::healing bad_apple("Purple Apple", "Purple apple", -15, 4);
 HEALING_ITEM::healing steak("Steak", "Still Mooing..", 20, 10);
 HEALING_ITEM::healing rations("Rations", "It'll hold you over", 15, 12);
 HEALING_ITEM::healing

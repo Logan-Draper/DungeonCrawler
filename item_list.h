@@ -11,6 +11,7 @@ public:
     int quantity;
     item_generic(string n, string d, int p, int q);
     item_generic(string n, string d, int p);
+    item_generic();
   };
 };
 

@@ -8,7 +8,6 @@ class HEALING_ITEM {
 public:
   struct healing : public ITEM_LIST::item_generic {
     int health;
-
     healing(int h);
     healing(int h, string n, string desc, int p, int q);
     healing(string n, string desc, int p, int q);

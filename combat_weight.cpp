@@ -32,7 +32,7 @@ void COM_WEIGHT::generate_enemies(vector<entity> &E, entity Player,
                                   vector<entity> reference_list) {
   int counter = 0;
   int stat_points = calculate_epsilon(Player);
-  cout << "made it to enemy_generation." << endl;
+  //  cout << "made it to enemy_generation." << endl;
   while (stat_points >= 0 && counter < 10) {
     counter++;
 
@@ -40,16 +40,16 @@ void COM_WEIGHT::generate_enemies(vector<entity> &E, entity Player,
     int random_enemy_sum = sum_stats(reference_list[random_enemy]);
 
     if ((stat_points - random_enemy_sum) > 0) {
-      cout << "made it to the: " << counter + 1 << " pushback" << endl;
+      //    cout << "made it to the: " << counter + 1 << " pushback" << endl;
       E.push_back(reference_list[random_enemy]);
-      cout << "made it AFTER the: " << counter + 1 << " pushback" << endl;
+      //   cout << "made it AFTER the: " << counter + 1 << " pushback" << endl;
       stat_points -= random_enemy_sum;
       continue;
     } else {
       break;
     }
   }
-  cout << "exited enemy_generation." << endl;
+  //  cout << "exited enemy_generation." << endl;
 }
 
 /*

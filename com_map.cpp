@@ -29,25 +29,25 @@ char room_type(vector<vector<char>> map, int direction, room_gen::cords cc) {
   };
 }
 
-void combat_simulation() {
+void combat_simulation(entity &P1) {
   COM_WEIGHT CW(0.15);
+  LVLUP LV;
   COM_SIM CS;
-  entity P1 = {"Player", 20, 10, 10, 000, 50, 50, 100, 100};
   vector<entity> room_enemies;
   int turn_count = 1;
   CW.generate_enemies(room_enemies, P1, enemy_list_1);
   room_enemies.push_back(P1);
-  cout << "got past sum_stats call." << endl;
+  //  cout << "got past sum_stats call." << endl;
   sort(room_enemies.begin(), room_enemies.end(),
        [](const entity &a, const entity &b) { return a.speed > b.speed; });
-  cout << "got past sort." << endl;
+  // cout << "got past sort." << endl;
   while (CS.sum_health(room_enemies) > 0) {
     cout << "Round: " << turn_count << endl;
     turn_count++;
     for (int i = 0; i < room_enemies.size(); i++) {
       if (room_enemies[i].ID != 0) {
         P1.current_health -= CS.turn_table(room_enemies[i], room_enemies);
-        this_thread::sleep_for(chrono::milliseconds(500));
+        //  this_thread::sleep_for(chrono::milliseconds(500));
         if (P1.current_health <= 0) {
           cout << "oops! You died! Thanks for playing! " << endl;
           exit(0);
@@ -60,25 +60,30 @@ void combat_simulation() {
   }
   cout << "Nice! You defeated all the enemies! " << endl;
   // NOTE: add random exclamation phrase.
+  LV.level_up_player(P1);
 };
 
-void room_action(char room_type) {
-
+void room_action(char room_type, entity &P1) {
+  MERCH Logan("Logan", "Welcome to my Shop!", 2, 2);
   switch (room_type) {
   case ('E'):
-    combat_simulation();
+    combat_simulation(P1);
     break;
   case ('R'):
     cout << "REST PLACEHOLDER" << endl;
     break;
   case ('N'):
-    cout << "NPC PLACEHOLDER" << endl;
+    cout << "NPC" << endl;
+    Logan.buy(player_inventory);
+    this_thread::sleep_for(chrono::milliseconds(750));
     break;
   case ('M'):
     cout << "RANDOM PLACE HOLDER" << endl;
+    this_thread::sleep_for(chrono::milliseconds(750));
     break;
   case ('B'):
     cout << "BLESSING PLACE HOLDER" << endl;
+    this_thread::sleep_for(chrono::milliseconds(750));
     break;
   case ('O'):
     cout << "O TYPE" << endl;
@@ -87,19 +92,16 @@ void room_action(char room_type) {
     cout << "DEFAULT " << endl;
   };
 }
-struct cords {
-
-  int x;
-  int y;
-};
 void driver() {
   room_gen::cords cc;
   room_gen RG;
+  entity P1 = {"Player", 200, 10, 10, 000, 50, 50, 100, 100};
   long seed;
   vector<vector<char>> map;
   cout << "Enter seed: " << endl;
   cin >> seed;
   srand(seed);
+  LG loot;
   RG.room_generation(25, 15, 2, map);
   RG.populate_room_types(2, 10, 3, 6, 1, map);
   cout << "\n\n";
@@ -107,7 +109,7 @@ void driver() {
     int direction = RG.map_direction(map);
     cc = RG.find_cordinates(map);
     char type = room_type(map, direction, cc);
-    room_action(type);
+    room_action(type, P1);
     RG.traverse_map(map, direction);
   }
 };

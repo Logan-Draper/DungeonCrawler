@@ -22,4 +22,5 @@ public:
       vector<HEALING_ITEM::healing> list, int n,
       vector<HEALING_ITEM::healing> &player_inventory_healing);
   void print_list();
+  void buy(vector<ITEM_LIST::item_generic> player_inventory);
 };

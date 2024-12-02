@@ -11,7 +11,7 @@ public:
   void produce_loot(int enemy_num);
   void print_inventory() const;
 };
-
+extern vector<ITEM_LIST::item_generic> player_inventory;
 extern ITEM_LIST::item_generic bones;
 extern HEALING_ITEM::healing apple;
 extern HEALING_ITEM::healing potion;
