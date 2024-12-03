@@ -3,31 +3,29 @@
 #include <vector>
 using namespace std;
 
-vector<ITEM_LIST::item_generic> player_inventory;
-
-void LG::add_item(vector<ITEM_LIST::item_generic> &list, string name,
-                  int quantity) {
+void LG::add_item(vector<ITEM_LIST::item_generic> &list,
+                  ITEM_LIST::item_generic item, int quantity) {
   for (int i = 0; i < list.size(); i++) {
-    if (list[i].name == name) {
+    if (list[i].name == item.name) {
       list[i].quantity += quantity;
       return;
     }
   }
   for (int i = 0; i < reference_list.size(); i++) {
-    if (reference_list[i].name == name) {
+    if (reference_list[i].name == item.name) {
       list.push_back(reference_list[i]);
       list[i].quantity = quantity;
       return;
     }
   }
-  ITEM_LIST::item_generic PLACE_HOLDER = {name, "", 0, quantity};
+  ITEM_LIST::item_generic PLACE_HOLDER = {item.name, "", 0, quantity};
   cout << "We should not be here. But I will add the PLACEHOLDER regardless.."
        << endl;
   list.push_back(PLACE_HOLDER);
   return;
 }
 
-void LG ::produce_loot(int enemy_num) {
+void LG ::produce_loot(int enemy_num, Player &P1) {
 
   switch (enemy_num) {
 
@@ -37,15 +35,13 @@ void LG ::produce_loot(int enemy_num) {
     int temp = (rand() % 100 + 1);
     if (temp > 0 && temp <= 80) {
       cout << "2 gold pieces" << endl;
-      add_item(player_inventory, "Gold", 2);
+      add_item(P1.player_inventory_generic, gold, 2);
       return;
-    }
-
-    else if (temp > 80 && temp <= 95) {
+    } else if (temp > 80 && temp <= 95) {
       cout << "2 gold pieces" << endl;
       cout << "And some leather" << endl;
-      add_item(player_inventory, "Gold", 2);
-      add_item(player_inventory, "Leather", 2);
+      add_item(P1.player_inventory_generic, gold, 2);
+      add_item(P1.player_inventory_generic, leather, 2);
       return;
     }
 
@@ -53,9 +49,9 @@ void LG ::produce_loot(int enemy_num) {
       cout << "2 gold pieces" << endl;
       cout << "And some leather" << endl;
       cout << "And a tibia? I think? Gross." << endl;
-      add_item(player_inventory, "Gold", 2);
-      add_item(player_inventory, "Leather", 2);
-      add_item(player_inventory, "Bones", 1);
+      add_item(P1.player_inventory_generic, gold, 2);
+      add_item(P1.player_inventory_generic, leather, 2);
+      add_item(P1.player_inventory_generic, bones, 1);
       return;
     }
   }
@@ -68,15 +64,15 @@ void LG ::produce_loot(int enemy_num) {
     int temp = (rand() % 100 + 1);
     if (temp > 0 && temp <= 55) {
       cout << "3 gold pieces" << endl;
-      add_item(player_inventory, "Gold", 3);
+      add_item(P1.player_inventory_generic, gold, 3);
       return;
     }
 
     else if (temp > 55 && temp <= 90) {
       cout << "3 gold pieces" << endl;
       cout << "And 3 withered bones" << endl;
-      add_item(player_inventory, "Gold", 3);
-      add_item(player_inventory, "Bones", 3);
+      add_item(P1.player_inventory_generic, gold, 3);
+      add_item(P1.player_inventory_generic, bones, 3);
       return;
     }
 
@@ -84,9 +80,9 @@ void LG ::produce_loot(int enemy_num) {
       cout << "3 gold pieces" << endl;
       cout << "3 withered bones" << endl;
       cout << "And a rusty broad sword" << endl;
-      add_item(player_inventory, "Gold", 3);
-      add_item(player_inventory, "Bones", 3);
-      add_item(player_inventory, "Sword", 1);
+      add_item(P1.player_inventory_generic, gold, 3);
+      add_item(P1.player_inventory_generic, bones, 3);
+      //  add_item(player_inventory, , 1); PLACEHOLDER FOR SWORD
       return;
     }
   }
@@ -97,7 +93,7 @@ void LG ::produce_loot(int enemy_num) {
     int temp = (rand() % 100 + 1);
     if (temp > 0 && temp <= 55) {
       cout << "1 gold piece" << endl;
-      add_item(player_inventory, "Gold", 1);
+      add_item(P1.player_inventory_generic, gold, 1);
       return;
     }
 
@@ -111,7 +107,7 @@ void LG ::produce_loot(int enemy_num) {
       cout << "1 gold piece" << endl;
       cout << "An Ogre Eye" << endl;
       cout << "And a Club" << endl;
-      add_item(player_inventory, "Gold", 1);
+      add_item(P1.player_inventory_generic, gold, 1);
       return;
     }
   }
@@ -134,12 +130,15 @@ void LG ::produce_loot(int enemy_num) {
   };
 }
 
-void LG::print_inventory() const {
+void LG::print_inventory(vector<ITEM_LIST::item_generic> list_g,
+                         vector<HEALING_ITEM::healing> list_h) {
   cout << "           INVENTORY:                 " << endl;
   cout << "======================================" << endl;
-  for (int i = 0; i < player_inventory.size(); i++) {
-    cout << player_inventory[i].name << ": " << player_inventory[i].quantity
-         << endl;
+  for (int i = 0; i < list_g.size(); i++) {
+    cout << list_g[i].name << ": " << list_g[i].quantity << endl;
+  }
+  for (int i = 0; i < list_h.size(); i++) {
+    cout << list_h[i].name << ": " << list_h[i].quantity << endl;
   }
   cout << endl;
   cout << "======================================" << endl;
