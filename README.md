@@ -9,6 +9,3 @@ run make and then run ./PLAY
 everything should be self explanatory from there.
 TA's: For Grading Purposes: Look in report.txt 
 
-# DungeonCrawler
-   MERCHANTS||ITEMS||HEALING ITEMS||COMBAT||MAP TRAVERSAL||RAW MODE IN COMMAND PROMPT
-
