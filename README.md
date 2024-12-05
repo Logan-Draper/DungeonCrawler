@@ -11,7 +11,6 @@ TA's: For Grading Purposes: Look in report.txt
 
 # DungeonCrawler
 ==========================
-Text Based Dungeon Crawler
 MERCHANTS
 ITEMS
 HEALING ITEMS
