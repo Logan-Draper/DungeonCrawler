@@ -1,4 +1,6 @@
+#pragma once
 #include "AllnAll.h"
+#include "blessing.h"
 #include "combat_weight.h"
 #include "enemy_stat_blocks.h"
 #include "fireball.h"
@@ -7,6 +9,8 @@
 #include "movement.h"
 #include "npc.h"
 #include "player.h"
+#include "rest.h"
+#include "room_bank.h"
 #include "thousand_arrow.h"
 #include <algorithm>
 #include <chrono>
@@ -33,16 +37,16 @@ public:
 
   int printELN(vector<entity> &list);
 
-  void dead_check(vector<entity> &list);
+  void dead_check(vector<entity> &list, Player P1);
 
-  void spell_attack(vector<SPELL *> spell_list, entity &player,
+  void spell_attack(vector<SPELL *> spell_list, Player &player,
                     vector<entity> &enemy_list);
 
   int attack(entity *target, entity attacker);
 
-  int Player_choice(entity &P1, vector<entity> &list);
+  int Player_choice(Player &P1, vector<entity> &list);
 
   int sum_health(vector<entity> &list);
 
-  int turn_table(entity NA, vector<entity> &list);
+  int turn_table(entity NA, vector<entity> &list, Player P1);
 };

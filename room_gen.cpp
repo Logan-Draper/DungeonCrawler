@@ -1,20 +1,24 @@
 #include "room_gen.h"
 
+// Defining shifts to make avaliable room logic easier
+// See "directions" function for usage.
 #define S (1 << 0)
 #define N (1 << 1)
 #define E (1 << 3)
 #define W (1 << 2)
 
+// Bunch of Constructors.
 room_gen::cords::cords() : x(0), y(0){};
 room_gen::cords::cords(int X, int Y) : x(X), y(Y){};
 room_gen::room_gen() { cords(); };
 
+// Populates the map with a variety of room types.
 vector<vector<char>> room_gen::populate_room_types(int NPC, int ENEM, int REST,
                                                    int RANDOM, int BLESSED,
                                                    vector<vector<char>> &map) {
   system("clear");
-  for (int i = 0; i < map.size(); i++) {
-    for (int j = 0; j < map.size(); j++) {
+  for (size_t i = 0; i < map.size(); i++) {
+    for (size_t j = 0; j < map.size(); j++) {
       if (map[i][j] == 'X') {
         int random = rand() % 5;
         if (NPC > 0 && random == 0) {
@@ -41,7 +45,6 @@ vector<vector<char>> room_gen::populate_room_types(int NPC, int ENEM, int REST,
           map[i][j] = 'B';
           BLESSED--;
         } else {
-          //          cout << "bumped limiter" << endl;
           j--;
         }
       }
@@ -49,11 +52,12 @@ vector<vector<char>> room_gen::populate_room_types(int NPC, int ENEM, int REST,
   }
   return map;
 }
+// Prints the map
 void room_gen::room_print(vector<vector<char>> map) {
   system("clear");
   cout << "=================================" << endl;
-  for (int i = 0; i < map.size(); i++) {
-    for (int j = 0; j < map.size(); j++) {
+  for (size_t i = 0; i < map.size(); i++) {
+    for (size_t j = 0; j < map.size(); j++) {
       if (j == 0) {
         cout << "||";
       }
@@ -66,8 +70,10 @@ void room_gen::room_print(vector<vector<char>> map) {
     cout << endl;
   }
   cout << "=================================" << endl;
+  cout << "Press I for Inventory" << endl;
+  cout << "Press E to Exit" << endl;
 }
-
+// Generates a map of X's that are always connected to each other.
 vector<vector<char>> room_gen::room_generation(int upper_bound, int lower_bound,
                                                int map_level,
                                                vector<vector<char>> &map) {
@@ -90,19 +96,15 @@ vector<vector<char>> room_gen::room_generation(int upper_bound, int lower_bound,
   int room_start_x = map_size / 2;
   int room_start_y = map_size / 2;
 
-  // int room_start_x = 0;
-  // int room_start_y = 0;
-
   // Generates starting point for the rooms.
 
   int current_room_x = room_start_x;
   int current_room_y = room_start_y;
   int internal_error_counter = 0;
   for (int k = 0; k < room_nums - 1; k++) {
-    if (internal_error_counter == 25) {
+    if (internal_error_counter == 200) {
       break;
     }
-    cout << "K :" << k << endl;
     int room_gen_move = (rand() % 100);
 
     //  If when I move forward, I go out of bounds, loop over again and
@@ -159,7 +161,6 @@ vector<vector<char>> room_gen::room_generation(int upper_bound, int lower_bound,
         map[current_room_x][current_room_y] = 'X';
       }
     } else {
-      cout << "We should not be here." << endl;
     }
     internal_error_counter++;
   }
@@ -169,22 +170,21 @@ vector<vector<char>> room_gen::room_generation(int upper_bound, int lower_bound,
 }
 room_gen::cords room_gen ::find_cordinates(vector<vector<char>> map) {
   cords current_cord = {0, 0};
-  for (int i = 0; i < map.size(); i++) {
-    for (int j = 0; j < map.size(); j++) {
+  for (size_t i = 0; i < map.size(); i++) {
+    for (size_t j = 0; j < map.size(); j++) {
       if (map[i][j] == 'C') {
         current_cord.x = i;
         current_cord.y = j;
-        //  cout << "X: " << current_cord.x << endl;
-        // cout << "Y: " << current_cord.y << endl;
       }
     }
   }
   return current_cord;
 };
-
+// Returns an int_size_8 that lets us tell avaliable directions based on bit
+// math.
 __int8_t room_gen::directions(vector<vector<char>> map, cords current_cord) {
-  int x = current_cord.x;
-  int y = current_cord.y;
+  size_t x = current_cord.x;
+  size_t y = current_cord.y;
   __int8_t ret = 0;
   if (y + 1 < map.size() && map[x][y + 1] != '_') {
     ret |= E;
@@ -200,7 +200,6 @@ __int8_t room_gen::directions(vector<vector<char>> map, cords current_cord) {
     }
   }
   if (x + 1 < map.size()) {
-    // cout << "got soth condition";
     if (map[x + 1][y] != '_') {
       ret |= S;
     }
@@ -208,75 +207,96 @@ __int8_t room_gen::directions(vector<vector<char>> map, cords current_cord) {
   return ret;
 }
 
-int room_gen::map_direction(vector<vector<char>> map) {
-
+// Gets movement input by putting terminal into RAW mode to make movement more
+// clean.
+int room_gen::map_direction(vector<vector<char>> map, Player P1) {
   struct termios oldsettings;
+  LG loot;
   Movement mg;
   room_gen rg;
   __int8_t rooms_flag = 0b0000;
   char input;
-  bool temp = true;
   mg.setRawMode(oldsettings);
   rg.room_print(map);
   room_gen::cords current_cordinates = rg.find_cordinates(map);
   rooms_flag = rg.directions(map, current_cordinates);
-  cout << "MAP!" << endl;
-
   input = mg.getKeyPress();
   char input3;
+  if (input == 'i' || input == 'I') {
+    do {
+      if (input == 'C') {
+        cout << "emergency exit." << endl;
+        exit(0);
+      }
+
+      loot.print_inventory(P1);
+      cout << "(B) to go Back" << endl;
+      cin >> input;
+      if (input == 'b' || input == 'B') {
+        break;
+      }
+    } while (false);
+    rg.room_print(map);
+  }
   if (input == 27) {
     char input2 = mg.getKeyPress();
     if (input2 == '[') {
       input3 = mg.getKeyPress();
-      // cout << "INPUT3: " << input3 << endl;
       if (input3 == 'B' && rooms_flag & S) {
-        // cout << "got to south exit logic" << endl;
         return 2;
       }
       if (input3 == 'A' && rooms_flag & N) {
-        // cout << "got to north exit logic" << endl;
         return 3;
       }
       if (input3 == 'C' && rooms_flag & E &&
-          current_cordinates.y + 1 < map.size()) {
-        // cout << "got to east exit logic" << endl;
+          (size_t)current_cordinates.y + 1 < map.size()) {
         return 0;
       }
       if (input3 == 'D' && rooms_flag & W && current_cordinates.y - 1 >= 0) {
-        //  cout << "got to west exit logic" << endl;
         return 1;
       }
     }
-  } else {
+  } else if (input == 'E' || input == 'e') {
     cout << "\n\nexiting..";
     exit(0);
   }
   mg.resetMode(oldsettings);
   return -1;
 };
+// Checks if every room on the map has been visited, exit condition for the
+// game.
+bool room_gen::map_clear(vector<vector<char>> map) {
+  bool clear = false;
+  for (size_t i = 0; i < map.size(); i++) {
+    for (size_t j = 0; j < map.size(); j++) {
+      if (map[i][j] != 'C' && map[i][j] != 'O' && map[i][j] != '_') {
+        clear = true;
+      }
+    }
+  }
 
+  return clear;
+}
+// Makes the actual movement on the map.
 void room_gen ::traverse_map(vector<vector<char>> &map, int input) {
+  LG loot;
   cords current_cordinates = find_cordinates(map);
   if (input == 2) {
-    // cout << "got to south exit logic" << endl;
     map[current_cordinates.x][current_cordinates.y] = 'O';
     map[current_cordinates.x + 1][current_cordinates.y] = 'C';
     return;
   }
   if (input == 3) {
-    // cout << "got to north exit logic" << endl;
     map[current_cordinates.x][current_cordinates.y] = 'O';
     map[current_cordinates.x - 1][current_cordinates.y] = 'C';
     return;
   }
   if (input == 0) {
-    // cout << "got to east exit logic" << endl;
     map[current_cordinates.x][current_cordinates.y] = 'O';
     map[current_cordinates.x][current_cordinates.y + 1] = 'C';
     return;
   }
   if (input == 1) {
-    //  cout << "got to west exit logic" << endl;
     map[current_cordinates.x][current_cordinates.y] = 'O';
     map[current_cordinates.x][current_cordinates.y - 1] = 'C';
     return;
@@ -284,21 +304,3 @@ void room_gen ::traverse_map(vector<vector<char>> &map, int input) {
     return;
   }
 };
-/*
-int main() {
-  room_gen rg;
-  long seed;
-  vector<vector<char>> map;
-  cout << "Enter a seed: ";
-  cin >> seed;
-  char input;
-  srand(seed);
-  rg.room_generation(25, 15, 2, map);
-  rg.populate_room_types(2, 50, 3, 6, 1, map);
-  cout << endl << endl << endl;
-  while (true) {
-    rg.traverse_map(map);
-  }
-  return 0;
-};
-*/

@@ -1,8 +1,13 @@
-using namespace std;
+#pragma once
+#include "loot_gen.h"
 #include "movement.h"
+#include <chrono>
 #include <cstdlib>
 #include <iostream>
+#include <thread>
 #include <vector>
+
+using namespace std;
 
 class room_gen {
 public:
@@ -22,12 +27,12 @@ public:
   room_gen();
   vector<vector<char>> populate_room_types(int n, int e, int R, int RA, int B,
                                            vector<vector<char>> &map);
-
+  bool map_clear(vector<vector<char>> map);
   void room_print(vector<vector<char>> map);
 
   vector<vector<char>> room_generation(int ub, int lb, int mplvl,
                                        vector<vector<char>> &map);
-  int map_direction(vector<vector<char>> map);
+  int map_direction(vector<vector<char>> map, Player P1);
 
   cords find_cordinates(vector<vector<char>> map);
 

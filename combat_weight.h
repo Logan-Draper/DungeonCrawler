@@ -1,3 +1,4 @@
+#pragma once
 #include "enemy_stat_blocks.h"
 #include "loot_gen.h"
 #include <iostream>

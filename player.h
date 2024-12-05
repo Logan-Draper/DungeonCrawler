@@ -1,7 +1,6 @@
 #pragma once
 #include "enemy_stat_blocks.h"
-#include "loot_gen.h"
-
+#include "healing_item.h"
 class Player : public entity {
 public:
   vector<ITEM_LIST::item_generic> player_inventory_generic;

@@ -1,6 +1,7 @@
 #include "level_up.h"
 #include "enemy_stat_blocks.h"
 
+// Levels the Player up based on whatever stat they choose.
 void LVLUP::level_up_player(entity &player) {
   char input;
   system("clear");
@@ -46,8 +47,7 @@ void LVLUP::level_up_player(entity &player) {
     player.MAX_MANA += 2;
     break;
   default:
-    cout << "exiting.." << endl;
-    exit(0);
+    cout << "no valid selection made." << endl;
   };
   player.current_mana = player.MAX_MANA;
   player.current_health = player.MAX_HEALTH;

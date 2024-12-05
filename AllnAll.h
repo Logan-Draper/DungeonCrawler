@@ -1,3 +1,4 @@
+#pragma once
 #include "spells.h"
 
 class AllnAll : public SPELL {

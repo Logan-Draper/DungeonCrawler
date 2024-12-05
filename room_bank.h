@@ -1,9 +1,12 @@
 #pragma once
-#include "enemy_stat_blocks.h"
+#include "combat_sim.h"
+#include "loot_gen.h"
+#include "player.h"
 #include "string"
 using namespace std;
 class RB {
 public:
+  RB();
   struct room {
     string description;
     string inspection_text;
@@ -13,5 +16,7 @@ public:
     room(string d) : description(d), inspection_text(" "){};
     room() : description("N/A"), inspection_text(" "){};
   };
-  void search(entity &P1, int room_level);
+  char search(Player &P1, room CR);
+  char print_room(Player &P1, room CR);
 };
+extern vector<RB::room> room_level_1;
